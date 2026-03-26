@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+pydantic
+pytest
+httpx
+pytest-asyncio
+pypdf
+python-multipart
+sentence-transformers
+chromadb
+fpdf

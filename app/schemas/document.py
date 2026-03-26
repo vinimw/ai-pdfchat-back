@@ -4,6 +4,7 @@ from app.schemas.chunk import DocumentChunk
 
 class DocumentExtractResponse(BaseModel):
     document_id: str
+    collection_name: str
     filename: str
     pages: int
     characters: int

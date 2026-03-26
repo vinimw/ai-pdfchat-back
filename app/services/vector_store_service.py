@@ -1,7 +1,9 @@
 import chromadb
 
+
 from app.schemas.chunk import DocumentChunk
 from app.schemas.retrieval import RetrievedChunk
+
 
 class VectorStoreService:
     def __init__(self, collection_name: str = "documents") -> None:
