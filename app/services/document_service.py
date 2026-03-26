@@ -1,3 +1,4 @@
+from pathlib import Path
 from uuid import uuid4
 
 from fastapi import UploadFile
@@ -12,26 +13,40 @@ from app.services.vector_store_service import VectorStoreService
 
 
 class DocumentService:
-    @staticmethod
-    async def extract_document(file: UploadFile, db: Session) -> DocumentExtractResponse:
+    STORAGE_DIR = Path("storage/documents")
+
+    @classmethod
+    def ensure_storage_dir(cls) -> None:
+        cls.STORAGE_DIR.mkdir(parents=True, exist_ok=True)
+
+    @classmethod
+    async def extract_document(cls, file: UploadFile, db: Session) -> DocumentExtractResponse:
+        cls.ensure_storage_dir()
+
+        original_filename = file.filename or "unknown.pdf"
         file_bytes = await file.read()
-        text, pages = PdfService.extract_text_from_bytes(file_bytes)
-        chunks = ChunkService.split_text(text)
 
         document_id = str(uuid4())
         collection_name = f"document_{document_id}"
 
+        stored_filename = f"{document_id}.pdf"
+        stored_path = cls.STORAGE_DIR / stored_filename
+        stored_path.write_bytes(file_bytes)
+
+        text, pages = PdfService.extract_text_from_bytes(file_bytes)
+        chunks = ChunkService.split_text(text)
+
         vector_store_service = VectorStoreService(collection_name=collection_name)
-        retrieval_service = RetrievalService(
-            vector_store_service=vector_store_service
-        )
+        retrieval_service = RetrievalService(vector_store_service=vector_store_service)
         retrieval_service.index_document(document_id=document_id, chunks=chunks)
 
         repository = DocumentRepository(db)
         repository.create(
             document_id=document_id,
             collection_name=collection_name,
-            filename=file.filename or "unknown.pdf",
+            filename=original_filename,
+            stored_filename=stored_filename,
+            file_path=str(stored_path),
             pages=pages,
             characters=len(text),
         )
@@ -39,7 +54,7 @@ class DocumentService:
         return DocumentExtractResponse(
             document_id=document_id,
             collection_name=collection_name,
-            filename=file.filename or "unknown.pdf",
+            filename=original_filename,
             pages=pages,
             characters=len(text),
             text=text,
