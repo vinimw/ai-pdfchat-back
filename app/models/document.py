@@ -29,12 +29,12 @@ class DocumentListItemResponse(BaseModel):
         from_attributes = True
 
 
-# class DocumentModel(Base):
-#     __tablename__ = "documents"
+class DocumentModel(Base):
+    __tablename__ = "documents"
 
-#     document_id = Column(String, primary_key=True, index=True)
-#     collection_name = Column(String, nullable=False, unique=True)
-#     filename = Column(String, nullable=False)
-#     pages = Column(Integer, nullable=False)
-#     characters = Column(Integer, nullable=False)
-#     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    document_id = Column(String, primary_key=True, index=True)
+    collection_name = Column(String, nullable=False, unique=True)
+    filename = Column(String, nullable=False)
+    pages = Column(Integer, nullable=False)
+    characters = Column(Integer, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
