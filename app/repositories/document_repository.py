@@ -11,6 +11,8 @@ class DocumentRepository:
         document_id: str,
         collection_name: str,
         filename: str,
+        stored_filename: str,
+        file_path: str,
         pages: int,
         characters: int,
     ) -> DocumentModel:
@@ -18,6 +20,8 @@ class DocumentRepository:
             document_id=document_id,
             collection_name=collection_name,
             filename=filename,
+            stored_filename=stored_filename,
+            file_path=file_path,
             pages=pages,
             characters=characters,
         )

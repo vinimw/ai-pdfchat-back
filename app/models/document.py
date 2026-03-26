@@ -6,6 +6,17 @@ from datetime import datetime
 from pydantic import BaseModel
 from app.schemas.chunk import DocumentChunk
 
+class DocumentModel(Base):
+    __tablename__ = "documents"
+
+    document_id = Column(String, primary_key=True, index=True)
+    collection_name = Column(String, nullable=False, unique=True)
+    filename = Column(String, nullable=False)
+    stored_filename = Column(String, nullable=False)
+    file_path = Column(String, nullable=False)
+    pages = Column(Integer, nullable=False)
+    characters = Column(Integer, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 
 class DocumentExtractResponse(BaseModel):
     document_id: str
@@ -27,14 +38,3 @@ class DocumentListItemResponse(BaseModel):
 
     class Config:
         from_attributes = True
-
-
-class DocumentModel(Base):
-    __tablename__ = "documents"
-
-    document_id = Column(String, primary_key=True, index=True)
-    collection_name = Column(String, nullable=False, unique=True)
-    filename = Column(String, nullable=False)
-    pages = Column(Integer, nullable=False)
-    characters = Column(Integer, nullable=False)
-    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
