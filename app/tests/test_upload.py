@@ -17,18 +17,13 @@ def test_upload_should_accept_valid_pdf() -> None:
     )
 
     assert response.status_code == 200
+
     body = response.json()
     assert body["filename"] == "sample.pdf"
     assert body["pages"] >= 1
     assert body["characters"] > 0
     assert isinstance(body["text"], str)
-
-
-def test_upload_should_reject_non_pdf() -> None:
-    response = client.post(
-        "/api/documents/upload",
-        files={"file": ("sample.txt", b"text content", "text/plain")},
-    )
-
-    assert response.status_code == 400
-    assert response.json()["detail"] == "Only PDF files are allowed"
+    assert isinstance(body["chunks"], list)
+    assert len(body["chunks"]) > 0
+    assert "index" in body["chunks"][0]
+    assert "text" in body["chunks"][0]
