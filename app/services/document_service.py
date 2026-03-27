@@ -3,7 +3,9 @@ from uuid import uuid4
 
 from fastapi import UploadFile
 from sqlalchemy.orm import Session
+from typing import Optional
 
+from app.models.document import DocumentModel
 from app.repositories.document_repository import DocumentRepository
 from app.schemas.document import DocumentExtractResponse
 from app.services.chunk_service import ChunkService
@@ -60,3 +62,30 @@ class DocumentService:
             text=text,
             chunks=chunks,
         )
+
+    @staticmethod
+    def get_document_or_raise(document_id: str, db: Session) -> Optional[DocumentModel]:
+        repository = DocumentRepository(db)
+        return repository.get_by_id(document_id)
+
+    @staticmethod
+    def delete_document(document_id: str, db: Session) -> bool:
+        repository = DocumentRepository(db)
+        document = repository.get_by_id(document_id)
+
+        if not document:
+            return False
+
+        file_path = Path(document.file_path)
+        if file_path.exists():
+            file_path.unlink()
+
+        vector_store_service = VectorStoreService(collection_name=document.collection_name)
+        try:
+            vector_store_service = VectorStoreService(collection_name=document.collection_name)
+            vector_store_service.delete_collection()
+        except Exception:
+            pass
+
+        repository.delete(document)
+        return True

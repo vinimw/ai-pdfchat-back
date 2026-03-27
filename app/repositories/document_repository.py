@@ -1,6 +1,9 @@
+from typing import Optional
+
 from sqlalchemy.orm import Session
 
 from app.models.document import DocumentModel
+
 
 class DocumentRepository:
     def __init__(self, db: Session) -> None:
@@ -35,9 +38,13 @@ class DocumentRepository:
     def list_all(self) -> list[DocumentModel]:
         return self.db.query(DocumentModel).order_by(DocumentModel.created_at.desc()).all()
 
-    def get_by_id(self, document_id: str) -> DocumentModel | None:
+    def get_by_id(self, document_id: str) -> Optional[DocumentModel]:
         return (
             self.db.query(DocumentModel)
             .filter(DocumentModel.document_id == document_id)
             .first()
         )
+
+    def delete(self, document: DocumentModel) -> None:
+        self.db.delete(document)
+        self.db.commit()
