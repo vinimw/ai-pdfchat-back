@@ -1,13 +1,17 @@
-import chromadb
+from pathlib import Path
 
+import chromadb
 
 from app.schemas.chunk import DocumentChunk
 from app.schemas.retrieval import RetrievedChunk
 
 
 class VectorStoreService:
+    STORAGE_DIR = Path("chroma_db")
+
     def __init__(self, collection_name: str = "documents") -> None:
-        self.client = chromadb.Client()
+        self.STORAGE_DIR.mkdir(parents=True, exist_ok=True)
+        self.client = chromadb.PersistentClient(path=str(self.STORAGE_DIR))
         self.collection = self.client.get_or_create_collection(name=collection_name)
 
     def index_chunks(
@@ -47,9 +51,9 @@ class VectorStoreService:
             where={"document_id": document_id},
         )
 
-        documents = result["documents"][0]
-        metadatas = result["metadatas"][0]
-        distances = result["distances"][0]
+        documents = result["documents"][0] if result["documents"] else []
+        metadatas = result["metadatas"][0] if result["metadatas"] else []
+        distances = result["distances"][0] if result["distances"] else []
 
         retrieved: list[RetrievedChunk] = []
 
@@ -65,3 +69,6 @@ class VectorStoreService:
             )
 
         return retrieved
+
+    def delete_collection(self) -> None:
+        self.client.delete_collection(name=self.collection.name)
