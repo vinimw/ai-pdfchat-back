@@ -58,6 +58,12 @@ Answer:
             top_k=top_k,
         )
 
+        if not retrieved_chunks:
+            return ChatAskResponse(
+                answer="I could not find enough information in the provided document.",
+                sources=[],
+            )
+
         prompt = self.build_prompt(question, retrieved_chunks)
         answer = self.llm_service.generate(prompt)
 
