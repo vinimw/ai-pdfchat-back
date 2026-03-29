@@ -14,17 +14,20 @@ class DocumentRepository:
         document_id: str,
         collection_name: str,
         filename: str,
-        stored_filename: str,
-        file_path: str,
         pages: int,
         characters: int,
+        stored_filename: str | None = None,
+        file_path: str | None = None,
     ) -> DocumentModel:
+        resolved_stored_filename = stored_filename or filename
+        resolved_file_path = file_path or f"storage/documents/{resolved_stored_filename}"
+
         document = DocumentModel(
             document_id=document_id,
             collection_name=collection_name,
             filename=filename,
-            stored_filename=stored_filename,
-            file_path=file_path,
+            stored_filename=resolved_stored_filename,
+            file_path=resolved_file_path,
             pages=pages,
             characters=characters,
         )
