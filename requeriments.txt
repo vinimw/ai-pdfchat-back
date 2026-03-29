@@ -1,11 +1,13 @@
 fastapi
 uvicorn
 pydantic
-pytest
-httpx
-pytest-asyncio
-pypdf
+sqlalchemy
+requests
 python-multipart
+pypdf
 sentence-transformers
 chromadb
 fpdf
+pytest
+pytest-asyncio
+httpx
