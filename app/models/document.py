@@ -3,7 +3,7 @@ from sqlalchemy import Column, DateTime, Integer, String
 from sqlalchemy.sql import func
 from app.db.database import Base
 from datetime import datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from app.schemas.chunk import DocumentChunk
 
 class DocumentModel(Base):
@@ -29,12 +29,11 @@ class DocumentExtractResponse(BaseModel):
 
 
 class DocumentListItemResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     document_id: str
     collection_name: str
     filename: str
     pages: int
     characters: int
     created_at: datetime
-
-    class Config:
-        from_attributes = True
