@@ -1,5 +1,5 @@
 from datetime import datetime
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from app.schemas.chunk import DocumentChunk
 
 class DocumentExtractResponse(BaseModel):
@@ -13,6 +13,8 @@ class DocumentExtractResponse(BaseModel):
 
 
 class DocumentListItemResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     document_id: str
     collection_name: str
     filename: str
@@ -21,6 +23,3 @@ class DocumentListItemResponse(BaseModel):
     pages: int
     characters: int
     created_at: datetime
-
-    class Config:
-        from_attributes = True
