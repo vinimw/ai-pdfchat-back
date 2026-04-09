@@ -17,9 +17,13 @@ htmlcov/
 documents.db
 *.sqlite3
 
-storage/
+storage/*
+!storage/.gitkeep
+storage/documents/*
+!storage/documents/.gitkeep
 
-chroma_db/
+chroma_db/*
+!chroma_db/.gitkeep
 
 .DS_Store
 .vscode/

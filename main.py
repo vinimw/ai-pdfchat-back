@@ -5,9 +5,13 @@ from app.api.routes.query import router as query_router
 from app.api.routes.upload import router as upload_router
 from app.db.database import Base, engine
 from app.api.routes.documents import router as documents_router
-#pull metadata 
+from app.services.document_service import DocumentService
+from app.services.vector_store_service import VectorStoreService
+
 from app.models.document import DocumentModel
 
+DocumentService.ensure_storage_dir()
+VectorStoreService.STORAGE_DIR.mkdir(parents=True, exist_ok=True)
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
