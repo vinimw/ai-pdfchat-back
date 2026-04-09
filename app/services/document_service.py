@@ -36,7 +36,7 @@ class DocumentService:
         stored_path.write_bytes(file_bytes)
 
         text, pages = PdfService.extract_text_from_bytes(file_bytes)
-        chunks = ChunkService.split_text(text)
+        chunks = ChunkService.split_text(text, chunk_size=700, overlap_words=30)
 
         vector_store_service = VectorStoreService(collection_name=collection_name)
         retrieval_service = RetrievalService(vector_store_service=vector_store_service)
