@@ -13,7 +13,7 @@ from app.services.vector_store_service import VectorStoreService
 class ChatService:
     def __init__(
         self,
-        db: Session,
+        db: Optional[Session] = None,
         llm_service: Optional[LlmService] = None,
         retrieval_service: Optional[RetrievalService] = None,
     ) -> None:
@@ -50,16 +50,22 @@ Answer:
         document_id: str,
         question: str,
         top_k: int = 3,
+        collection_name: Optional[str] = None,
     ) -> ChatAskResponse:
-        repository = DocumentRepository(self.db)
-        document = repository.get_by_id(document_id)
+        resolved_collection_name = collection_name
 
-        if not document:
-            raise ValueError("Document not found")
+        if self.db is not None:
+            repository = DocumentRepository(self.db)
+            document = repository.get_by_id(document_id)
+
+            if not document:
+                raise ValueError("Document not found")
+
+            resolved_collection_name = document.collection_name
 
         retrieval_service = self.retrieval_service or RetrievalService(
             vector_store_service=VectorStoreService(
-                collection_name=document.collection_name
+                collection_name=resolved_collection_name or f"document_{document_id}"
             )
         )
 
